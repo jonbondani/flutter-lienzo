@@ -1,8 +1,9 @@
 import 'dart:io';
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+
 
 class Draw extends StatefulWidget {
   @override
@@ -10,6 +11,8 @@ class Draw extends StatefulWidget {
 }
 
 class _DrawState extends State<Draw> {
+  ui.Image image;
+  bool isImageloaded = false;
   Color selectedColor = Colors.black;
   Color pickerColor = Colors.black;
   double strokeWidth = 3.0;
@@ -25,8 +28,12 @@ class _DrawState extends State<Draw> {
     Colors.amber,
     Colors.black
   ];
+
+  
+
   @override
   Widget build(BuildContext context) {
+    DrawingPainter editor= DrawingPainter(pointsList: points);
     return Scaffold(
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -34,7 +41,7 @@ class _DrawState extends State<Draw> {
             padding: const EdgeInsets.only(left: 8.0, right: 8.0),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50.0),
-                color: Colors.greenAccent),
+                color: Colors.greenAccent[400]),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -138,13 +145,18 @@ class _DrawState extends State<Draw> {
             points.add(null);
           });
         },
-        child: CustomPaint(
-          size: Size.infinite,
-          painter: DrawingPainter(
-            pointsList: points,
+        child: Stack(
+          children: <Widget>[
+            Center(
+              child: Image.asset("assets/images/hut.png"),
+            ),
+            CustomPaint(
+              size: Size.infinite,
+              painter: editor,
           ),
-        ),
+        ],
       ),
+    ),
     );
   }
 
@@ -217,8 +229,11 @@ class _DrawState extends State<Draw> {
   }
 }
 
+
+
 class DrawingPainter extends CustomPainter {
   DrawingPainter({this.pointsList});
+  
   List<DrawingPoints> pointsList;
   List<Offset> offsetPoints = List();
   @override
@@ -232,7 +247,7 @@ class DrawingPainter extends CustomPainter {
         offsetPoints.add(pointsList[i].points);
         offsetPoints.add(Offset(
             pointsList[i].points.dx + 0.1, pointsList[i].points.dy + 0.1));
-        canvas.drawPoints(PointMode.points, offsetPoints, pointsList[i].paint);
+        canvas.drawPoints(ui.PointMode.points, offsetPoints, pointsList[i].paint);
       }
     }
   }
